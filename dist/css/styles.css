@@ -2,6 +2,9 @@
 body {
   font-family: 'Ubuntu';
   font-size: 16px;
+  padding: 0px;
+  margin: 0px;
+  color: #cd22cc;
 }
 h1,
 h2,
@@ -11,21 +14,31 @@ h5,
 h6 {
   font-family: 'Baloo Paaji', cursive;
   font-size: 40px;
-  margin: 10px 0px;
 }
 label,
 input,
 select {
   display: block;
+  margin: 10px;
+  font-size: 20px;
 }
 .container {
   width: 100%;
-  padding: 10px;
+  padding: 0px;
+  margin: 0px;
+  background-color: #fdfda8;
 }
 .container .header {
-  background-color: #fdfd88;
+  background-color: #fcfc76;
   color: #fe44ff;
   padding: 10px;
+}
+.container .header h1 {
+  margin: 25px 0px 0px 0px;
+  line-height: 18px;
+}
+.container .content {
+  padding: 20px 0px 0px 0px;
 }
 .row {
   width: 100%;
@@ -35,8 +48,8 @@ select {
   clear: both;
 }
 .col-50 {
-  float: left;
-  width: 50%;
+  width: 100%;
+  float: none;
 }
 .col-100 {
   width: 100%;
@@ -46,5 +59,9 @@ select {
     width: 740px;
     margin: 0 auto;
     padding: 0;
+  }
+  .col-50 {
+    float: left;
+    width: 50%;
   }
 }

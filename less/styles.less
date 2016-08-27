@@ -1,28 +1,51 @@
 @import 'https://fonts.googleapis.com/css?family=Baloo+Paaji|Ubuntu';
 
+@background-lighter: #fdfda8;
+@background-darker: darken(@background-lighter, 10%);
+@text-enfasis: #fe44ff; 
+@text-normal: #cd22cc;
+
 body {
   font-family: 'Ubuntu';
   font-size: 16px;
+  padding: 0px;
+  margin: 0px;
+  color: @text-normal;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Baloo Paaji', cursive;
   font-size: 40px;
-  margin: 10px 0px;
 }
 
 label, input, select {
   display: block;
+  margin: 10px;
+  font-size: 20px;
+  
 }
 
 .container {
   width: 100%;
-  padding: 10px;
+  padding: 0px;
+  margin: 0px;
+  background-color: @background-lighter;
 
   .header {
-    background-color: #fdfd88;
-    color: #fe44ff;
+    background-color: @background-darker;
+    color: @text-enfasis;
     padding: 10px;
+
+    h1 {
+      margin: 25px 0px 0px 0px;
+      line-height: 18px;
+    }
+  }
+
+  .content {
+  
+    padding: 20px 0px 0px 0px;
+
   }
 }
 
@@ -36,8 +59,8 @@ label, input, select {
 }
 
 .col-50 {
-  float: left;
-  width: 50%;
+  width: 100%;
+  float: none;
 }
 
 .col-100 {
@@ -50,5 +73,10 @@ label, input, select {
     width: 740px;
     margin: 0 auto;
     padding: 0;
+  }
+
+  .col-50 {
+    float: left;
+    width: 50%;
   }
 }
