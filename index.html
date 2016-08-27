@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Train schedules</title>
+
+  <link rel="stylesheet" href="dist/css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Welcome to trains</h1>
+      <p>Please select departure and arrival stations</p>
+    </div>
+    
+    <form id="stations-form" action="#">
+      <div class="row">
+        <div class="col-50">
+          <label for="departure">
+            Departure
+          </label>
+          <input type="text" name="departure" id="departure" placeholder="Monumento al Labrador">
+        </div>
+        <div class="col-50">
+          <label for="arrival">
+            Arrival
+          </label>
+          <input type="text" name="arrival" id="arrival" placeholder="Hospital San Pedro">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-100">
+          <input type="submit" name="Ver ruta">
+        </div>
+      </div>
+    </form>
+
+    <div class="route-result" style="opacity: 0;">
+      <h2>This is your suggested route</h2>
+      <div id="route">
+        
+      </div>
+      <div id="timetable">
+        
+      </div>
+    </div>
+  </div>
+</body>
+</html>
