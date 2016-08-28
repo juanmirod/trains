@@ -40,9 +40,25 @@ select {
 .container .content {
   padding: 20px 0px 0px 0px;
 }
+.alert {
+  border: 1px solid grey;
+  border-radius: 5px;
+  opacity: 0;
+  width: 100%;
+  padding: 10px;
+  transition: all 0.3s ease-in;
+  box-sizing: border-box;
+}
+.alert.error {
+  color: #cc1111;
+  border-color: #cc1111;
+  opacity: 1;
+}
 .row {
+  overflow: hidden;
   width: 100%;
   padding: 0px 10px;
+  box-sizing: border-box;
 }
 .row:after {
   clear: both;

@@ -1,5 +1,7 @@
 var gulp = require('gulp');
 var less = require('gulp-less');
+var LessAutoprefix = require('less-plugin-autoprefix');
+var autoprefix = new LessAutoprefix({ browsers: ['last 2 versions'] });
 var babel = require('gulp-babel');
 var browserSync = require('browser-sync').create();
 var jasmine = require('gulp-jasmine-phantom');
@@ -13,7 +15,9 @@ gulp.task('default', function() {
 gulp.task('styles', function(){
 
   gulp.src('./less/**/*.less')
-    .pipe(less(['autoprefix']))
+    .pipe(less({
+       plugins: [autoprefix]
+     }))
     .pipe(gulp.dest('./dist/css/'));
 
 });

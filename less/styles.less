@@ -2,8 +2,10 @@
 
 @background-lighter: #fdfda8;
 @background-darker: darken(@background-lighter, 10%);
+@background-error: #ffaaaa;
 @text-enfasis: #fe44ff; 
 @text-normal: #cd22cc;
+@text-error: #cc1111;
 
 body {
   font-family: 'Ubuntu';
@@ -49,9 +51,27 @@ label, input, select {
   }
 }
 
+.alert {
+  border: 1px solid grey;
+  border-radius: 5px;
+  opacity: 0;
+  width: 100%;
+  padding: 10px;
+  transition: all 0.3s ease-in;
+  box-sizing:border-box;
+
+  &.error {
+    color: @text-error;
+    border-color: @text-error;  
+    opacity: 1;
+  }
+}
+
 .row {
+  overflow: hidden;
   width: 100%;
   padding: 0px 10px;
+  box-sizing:border-box;
   
   &:after {
     clear: both;
