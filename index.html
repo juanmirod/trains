@@ -20,18 +20,32 @@
             <label for="departure">
               Departure
             </label>
-            <input type="text" name="departure" id="departure" placeholder="Monumento al Labrador">
+            <input 
+              type="text" 
+              list="departure-stops" 
+              name="departure" 
+              id="departure" 
+              placeholder="Monumento al Labrador">
+            <datalist id="departure-stops">
+            </datalist>
           </div>
           <div class="col-50">
             <label for="arrival">
               Arrival
             </label>
-            <input type="text" name="arrival" id="arrival" placeholder="Hospital San Pedro">
+            <input 
+              list="arrival-stops"
+              type="text" 
+              name="arrival" 
+              id="arrival" 
+              placeholder="Hospital San Pedro">
+            <datalist id="arrival-stops">
+            </datalist>
           </div>
         </div>
         <div class="row">
           <div class="col-100">
-            <input type="submit" name="Ver ruta">
+            <input type="submit" name="send" value="Ver ruta">
           </div>
         </div>
       </form>      
@@ -47,5 +61,8 @@
       </div>
     </div>
   </div>
+
+  <script src="dist/js/routes.js"></script>
+  <script src="dist/js/main.js"></script>
 </body>
 </html>
