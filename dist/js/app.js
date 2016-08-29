@@ -5,25 +5,22 @@ var App = function () {
   var departures, arrivals, submitButton;
   var stops;
 
-  function loadStops() {
+  /* 
+    Add the options to the datalist elements in the form.
+  */
+  function addStops(stops) {
 
-    var promise = Routes.stops();
+    stops.forEach(function addStop(stop) {
 
-    promise.then(function (result) {
-
-      // keep a reference to the array for validation
-      stops = result;
-
-      // add the options to the datalist
-      result.forEach(function addStop(stop) {
-
-        var option = '<option value="' + stop.stop_name + ' - ' + stop.stop_id + '"></option>';
-        departures.innerHTML += option;
-        arrivals.innerHTML += option;
-      });
+      var option = '<option value="' + stop.stop_name + ' - ' + stop.stop_id + '"></option>';
+      departures.innerHTML += option;
+      arrivals.innerHTML += option;
     });
-  };
+  }
 
+  /*
+    Shows a message in the message-box element.
+  */
   function showInfoMessage(message, type) {
 
     var messageBox = document.getElementById('message-box');
@@ -41,9 +38,45 @@ var App = function () {
     }
   }
 
+  /*
+    Makes the message-box element disappear through css class
+  */
   function clearInfoMessage() {
     var messageBox = document.getElementById('message-box');
     messageBox.className = 'alert';
+  }
+
+  /*
+    Request the stops from server and add them to an array
+    to be able to check that the user input is valid.
+  */
+  function loadStops() {
+
+    var promise = Routes.stops();
+
+    promise.then(function (result) {
+
+      // keep a reference to the array for validation
+      stops = result;
+
+      addStops(stops);
+    });
+  };
+
+  /*
+    Get the station code from a string
+  */
+  function getStationCode(station) {
+
+    var parts = station.split('-');
+
+    if (parts.length > 1) {
+      // This could be a string from the datalist, extract the code
+      return parts[1].trim();
+    }
+
+    // This could be a code written by the user
+    return station;
   }
 
   /*
@@ -52,22 +85,18 @@ var App = function () {
   */
   function checkStation(station) {
 
-    var parts = station.split('-');
-    var code = 0;
-
-    if (parts.length > 1) {
-      // This could be a string from the datalist, extract the code
-      code = parts[1].trim();
-    } else {
-      // This could be a code written by the user
-      code = station;
-    }
+    var code = getStationCode(station);
 
     // Check that the code is in the list of stops
     return stops.some(function (stop) {
       return stop.stop_id == code;
     });
   }
+
+  /*
+    Finds a trip between two stations, returns the trip id
+  */
+  function findTrip(departureId, arrivalId) {}
 
   /*
     Submit the user selection and show the route if available or an
@@ -90,6 +119,7 @@ var App = function () {
     // If the departure and arrival stations are correct
     // search for a trip between them and show the times and route
     console.log('Valid stations!');
+    findTrip(getStationCode(departure), getStationCode(arrival));
   }
 
   return {
@@ -103,7 +133,7 @@ var App = function () {
       arrivals = document.getElementById('arrival-stops');
       submitButton = document.getElementById('search');
 
-      // Initialize the interface
+      // Populate datalists and add listeners
       loadStops();
       submitButton.addEventListener('click', submitStations);
     }
