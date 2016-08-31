@@ -10,11 +10,23 @@ var App = function () {
   */
   function addStops(stops) {
 
-    stops.forEach(function addStop(stop) {
+    stops.forEach(function (stop) {
 
       var option = '<option value="' + stop.stop_name + ' - ' + stop.stop_id + '"></option>';
       departures.innerHTML += option;
       arrivals.innerHTML += option;
+    });
+  }
+
+  function showTripTimes(trips) {
+
+    var results = document.getElementById('timetable');
+    results.innerHTML = '';
+
+    trips.forEach(function (trip, index) {
+
+      var row = '<div> ' + trip.arrival_time + ' - ' + trip.trip_id + ' </div>';
+      results.innerHTML += row;
     });
   }
 
@@ -52,9 +64,7 @@ var App = function () {
   */
   function loadStops() {
 
-    var promise = Routes.stops();
-
-    promise.then(function (result) {
+    Routes.stops().then(function (result) {
 
       // keep a reference to the array for validation
       stops = result;
@@ -88,15 +98,41 @@ var App = function () {
     var code = getStationCode(station);
 
     // Check that the code is in the list of stops
-    return stops.some(function (stop) {
+    return stops.some(function check(stop) {
       return stop.stop_id == code;
     });
   }
 
+  function findMatchingTrips(departureTimes, arrivalTimes) {
+
+    // gets all trips that goes to the departure stop and the arrival stop
+    var validTrips = departureTimes.filter(function (departureTrip) {
+      return arrivalTimes.some(function (arrivalTrip) {
+        return arrivalTrip.trip_id == departureTrip.trip_id;
+      });
+    });
+
+    return validTrips;
+  }
+
   /*
-    Finds a trip between two stations, returns the trip id
+    Finds trips between two stations, returns the trips ids
   */
-  function findTrip(departureId, arrivalId) {}
+  function findTrips(departureId, arrivalId) {
+
+    return Routes.stopTimes().then(function (result) {
+
+      var departureTimes = result.filter(function (time) {
+        return time.stop_id == departureId;
+      });
+
+      var arrivalTimes = result.filter(function (time) {
+        return time.stop_id == arrivalId;
+      });
+
+      return findMatchingTrips(departureTimes, arrivalTimes);
+    });
+  }
 
   /*
     Submit the user selection and show the route if available or an
@@ -118,8 +154,13 @@ var App = function () {
 
     // If the departure and arrival stations are correct
     // search for a trip between them and show the times and route
-    console.log('Valid stations!');
-    findTrip(getStationCode(departure), getStationCode(arrival));
+    findTrips(getStationCode(departure), getStationCode(arrival)).then(function (trips) {
+      if (trips.length > 0) {
+        showTripTimes(trips);
+      } else {
+        showInfoMessage('We couldn\'t find a trip between these two stations', 'error');
+      }
+    });
   }
 
   return {

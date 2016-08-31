@@ -7,6 +7,7 @@ var Routes = function module() {
   var routesFile = 'routes.txt';
   var tripsFile = 'trips.txt';
   var stopsFile = 'stops.txt';
+  var stopTimesFile = 'stop_times.txt';
 
   var csvToArray = function csvToArray(text) {
 
@@ -16,7 +17,7 @@ var Routes = function module() {
     });
   };
 
-  var csvToObject = function csvToObject(text) {
+  var csvToObjects = function csvToObjects(text) {
 
     var table = csvToArray(text);
     var keys = table[0];
@@ -31,7 +32,7 @@ var Routes = function module() {
     });
   };
 
-  function getCsvAsObject(url) {
+  function getCsvAsObjects(url) {
 
     return fetch(url, {
       method: 'GET'
@@ -40,10 +41,10 @@ var Routes = function module() {
       return response.text();
     }).then(function (textContent) {
 
-      return csvToObject(textContent);
+      return csvToObjects(textContent);
     }).catch(function (error) {
 
-      console.log(error);
+      console.error(error);
     });
   }
 
@@ -55,17 +56,21 @@ var Routes = function module() {
     */
     routes: function routes() {
 
-      return getCsvAsObject(baseUrl + routesFile);
+      return getCsvAsObjects(baseUrl + routesFile);
     },
 
     trips: function trips() {
       // get the route/line and return the times for this line
-      return getCsvAsObject(baseUrl + tripsFile);
+      return getCsvAsObjects(baseUrl + tripsFile);
     },
 
     stops: function stops() {
       // returns the stops of this line
-      return getCsvAsObject(baseUrl + stopsFile);
+      return getCsvAsObjects(baseUrl + stopsFile);
+    },
+
+    stopTimes: function stopTimes() {
+      return getCsvAsObjects(baseUrl + stopTimesFile);
     }
 
   };
