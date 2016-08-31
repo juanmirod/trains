@@ -2,7 +2,6 @@ import * as Stops from './orm/Stops.js';
 import * as Http from './http.js';
 
 var departures, arrivals, submitButton;
-var stops;
 
 /* 
   Add the options to the datalist elements in the form.
@@ -99,8 +98,10 @@ function checkStation(station) {
   var code = getStationCode(station);
 
   // Check that the code is in the list of stops
-  return stops.some(function check(stop) {
-    return stop.stop_id == code;
+  return Stops.getAll().then(function(stops){
+    return stops.some(function check(stop) {
+      return stop.stop_id == code;
+    });
   });
 
 }
@@ -151,24 +152,28 @@ function submitStations(evt) {
   var departure = document.getElementById('departure').value;
   var arrival = document.getElementById('arrival').value;
 
-  if(!checkStation(departure) || !checkStation(arrival)) {
-    showInfoMessage(
-      'You have to select a valid departure and arrival stations from the lists or write a valid stop code.',
-      'error'
-      );
-    return false;
-  }
-
-  // If the departure and arrival stations are correct
-  // search for a trip between them and show the times and route
-  findTrips(getStationCode(departure), getStationCode(arrival)).then(function(trips){
-    if(trips.length > 0) {
-      showTripTimes(trips);
-    } else {
-      showInfoMessage('We couldn\'t find a trip between these two stations', 'error');
+  Promise.all([checkStation(departure), checkStation(arrival)]).then(function(result){
+    
+    if(!result[0] || !result[1]) {
+      showInfoMessage(
+        'You have to select a valid departure and arrival stations from the lists or write a valid stop code.',
+        'error'
+        );
+      return false;
     }
+    
+    // If the departure and arrival stations are correct
+    // search for a trip between them and show the times and route
+    findTrips(getStationCode(departure), getStationCode(arrival)).then(function(trips){
+      if(trips.length > 0) {
+        showTripTimes(trips);
+      } else {
+        showInfoMessage('We couldn\'t find a trip between these two stations', 'error');
+      }
 
-  });
+    });
+  })
+
 
 }
 
