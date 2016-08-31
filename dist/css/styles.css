@@ -1,18 +1,18 @@
 @import 'https://fonts.googleapis.com/css?family=Baloo+Paaji|Ubuntu';
 /*
-@background-lighter: #fdfda8;
-@background-darker: darken(@background-lighter, 10%);
-@background-error: #ffaaaa;
-@text-enfasis: #fe44ff; 
-@text-normal: #cd22cc;
-@text-error: #cc1111;
+// cake palette
+@background-lighter: #E2DF9A;
+@background-darker: #EBE54D;
+@text-enfasis: #757449; 
+@text-normal: #4B490B;
+@text-error: #FF0051;
 */
 body {
   font-family: 'Ubuntu';
   font-size: 16px;
   padding: 0px;
   margin: 0px;
-  color: #4B490B;
+  color: #cd22cc;
 }
 h1,
 h2,
@@ -34,11 +34,11 @@ select {
   width: 100%;
   padding: 0px;
   margin: 0px;
-  background-color: #E2DF9A;
+  background-color: #fdfda8;
 }
 .container .header {
-  background-color: #EBE54D;
-  color: #757449;
+  background-color: #fcfc76;
+  color: #fe44ff;
   padding: 10px;
 }
 .container .header h1 {
@@ -58,8 +58,8 @@ select {
   box-sizing: border-box;
 }
 .alert.error {
-  color: #FF0051;
-  border-color: #FF0051;
+  color: #cc1111;
+  border-color: #cc1111;
   opacity: 1;
 }
 .row {

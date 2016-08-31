@@ -2,7 +2,10 @@ var gulp = require('gulp');
 var less = require('gulp-less');
 var LessAutoprefix = require('less-plugin-autoprefix');
 var autoprefix = new LessAutoprefix({ browsers: ['last 2 versions'] });
-var babel = require('gulp-babel');
+var babel = require('babelify');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 var browserSync = require('browser-sync').create();
 var jasmine = require('gulp-jasmine-phantom');
 
@@ -24,13 +27,18 @@ gulp.task('styles', function(){
 
 /////////////////////////////// JS //////////////////////////////////
 
-gulp.task('build:js', function() {
-  
-  gulp.src('./app/**/!(*_tests).js')
-    .pipe(babel({
-      presets: ['es2015']
-      }))
-    .pipe(gulp.dest('./dist/js/'));
+gulp.task('bundle', function() {
+
+  var bundler = browserify('./app/main.js', { debug: true }).transform(babel.configure({
+                  // Use all of the ES2015 spec
+                  presets: ["es2015"]
+                }));
+
+  bundler.bundle()
+      //.on('error', function(err) { console.error(err); this.emit('end'); })
+      .pipe(source('build.js'))
+      .pipe(buffer())
+      .pipe(gulp.dest('./dist/js'));
 
 });
 
@@ -38,7 +46,7 @@ gulp.task('build:js', function() {
 /*
   Run the tests suite once
   */
-gulp.task('tests', ['build:js'], function () {
+gulp.task('tests', ['bundle'], function () {
   
   gulp.src([
     'node_modules/babel-polyfill/browser.js',
@@ -92,10 +100,10 @@ gulp.task('reload', function() {
   */
 
 // Development
-gulp.task('serve', ['server', 'styles', 'build:js'], function() {
+gulp.task('serve', ['server', 'styles', 'bundle'], function() {
 
   gulp.watch('less/**/*.less', ['styles']);
-  gulp.watch('app/**/*.js', ['build:js']);
+  gulp.watch('app/**/*.js', ['bundle']);
 
   gulp.watch([
     'dist/css/*.css',

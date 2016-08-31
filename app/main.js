@@ -1,4 +1,7 @@
+import * as App from './app.js';
+
 (function() {
+'use strict';
 
   function ready() {
       
