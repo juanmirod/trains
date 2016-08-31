@@ -27,15 +27,19 @@ gulp.task('styles', function(){
 
 /////////////////////////////// JS //////////////////////////////////
 
+/*
+  Transpiles the code using babel and es2015 preset and then bundles 
+  the application in a file.
+*/
 gulp.task('bundle', function() {
 
-  var bundler = browserify('./app/main.js', { debug: true }).transform(babel.configure({
-                  // Use all of the ES2015 spec
-                  presets: ["es2015"]
-                }));
+  var bundler = browserify('./app/main.js', { debug: true })
+                  .transform(babel.configure({
+                    presets: ["es2015"]
+                  }));
 
   bundler.bundle()
-      //.on('error', function(err) { console.error(err); this.emit('end'); })
+      .on('error', function(err) { console.error(err); this.emit('end'); })
       .pipe(source('build.js'))
       .pipe(buffer())
       .pipe(gulp.dest('./dist/js'));
