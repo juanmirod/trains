@@ -42,7 +42,7 @@ import * as App from './app.js';
 
     if (!navigator.serviceWorker) return;
 
-    navigator.serviceWorker.register('/dist/js/service_worker.js').then(function() {
+    navigator.serviceWorker.register('./dist/js/service_worker.js').then(function() {
       console.log('Registration worked!');
     }).catch(function() {
       console.log('Registration failed!');
