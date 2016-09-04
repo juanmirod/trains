@@ -8,14 +8,14 @@ self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(staticCacheName).then(function(cache) {
       return cache.addAll([
-        '/index.html',
-        '/dist/js/main.js',
-        '/dist/css/styles.css',
+        './index.html',
+        './dist/js/main.js',
+        './dist/css/styles.css',
         'https://fonts.googleapis.com/css?family=Baloo+Paaji|Ubuntu',
-        '/dist/data/stops.txt',
-        '/dist/data/stop_times.txt',
-        '/dist/data/routes.txt',
-        '/dist/data/trips.txt'
+        './dist/data/stops.txt',
+        './dist/data/stop_times.txt',
+        './dist/data/routes.txt',
+        './dist/data/trips.txt'
       ]);
     })
   );
