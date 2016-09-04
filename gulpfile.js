@@ -33,17 +33,22 @@ gulp.task('styles', function(){
 */
 gulp.task('bundle', function() {
 
-  var bundler = browserify('./app/main.js', { debug: true })
+  var bundler = function(file){
+    return browserify(file, { debug: true })
                   .transform(babel.configure({
                     presets: ["es2015"]
                   }));
+  }
 
-  bundler.bundle()
+  bundler('./app/main.js').bundle()
       .on('error', function(err) { console.error(err); this.emit('end'); })
-      .pipe(source('build.js'))
+      .pipe(source('main.js'))
       .pipe(buffer())
       .pipe(gulp.dest('./dist/js'));
 
+  // copy the service worker without bundling
+  gulp.src('./app/service_worker.js')
+    .pipe(gulp.dest('./dist/js/'));
 });
 
 //////////////////////////// TESTS ////////////////////////////////////////

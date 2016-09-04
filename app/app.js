@@ -1,6 +1,7 @@
 import * as Stops from './orm/Stops.js';
 import * as Http from './http.js';
 
+// Interactive elements in the page
 var departures, arrivals, submitButton;
 
 /* 
