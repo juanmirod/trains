@@ -6,18 +6,42 @@ var _db;
 function openDatabase() {
   
   return idb.open('trains', 1, function(upgradeDb) {
-    var store = upgradeDb.createObjectStore('stops', {
-      keyPath: 'stop_id'
-    });
+    
+    switch(upgradeDb.oldVersion) {
+    
+      case 0:
+        upgradeDb.createObjectStore('stops', {
+          keyPath: 'stop_id'
+        });
 
-    var store = upgradeDb.createObjectStore('trips', {
-      keyPath: 'trip_id'
-    });
+        upgradeDb.createObjectStore('trips', {autoIncrement: true});
 
-    var store = upgradeDb.createObjectStore('routes', {
-      keyPath: 'route_id'
-    });
+        upgradeDb.createObjectStore('routes', {
+          keyPath: 'route_id'
+        });
+
+        var tripStore = upgradeDb.transaction.objectStore('trips');
+        tripStore.createIndex('stop', 'stop_id');
+        tripStore.createIndex('trip', 'trip_id');
+
+    }
   });
+
+  dbPromise = idb.open('test-db', 4, function(upgradeDb) {
+  switch(upgradeDb.oldVersion) {
+    case 0:
+      var keyValStore = upgradeDb.createObjectStore('keyval');
+      keyValStore.put("world", "hello");
+    case 1:
+      upgradeDb.createObjectStore('people', { keyPath: 'name' });
+    case 2:
+      var peopleStore = upgradeDb.transaction.objectStore('people');
+      peopleStore.createIndex('animal', 'favoriteAnimal');
+    case 3:
+      peopleStore = upgradeDb.transaction.objectStore('people');
+      peopleStore.createIndex('age', 'age');
+  }
+});
 
 }
 

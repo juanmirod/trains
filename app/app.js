@@ -1,4 +1,5 @@
 import * as Stops from './orm/Stops.js';
+import * as Trips from './orm/Trips.js';
 import * as Http from './http.js';
 
 // Interactive elements in the page
@@ -124,19 +125,13 @@ function findMatchingTrips(departureTimes, arrivalTimes) {
 */
 function findTrips(departureId, arrivalId) {
 
-  return Http.stopTimes().then(function(result){
-    
-    var departureTimes = result.filter(function(time) {
-      return time.stop_id == departureId;
+  return Promise.all([Trips.getTripStopTimes(departureId), Trips.getTripStopTimes(arrivalId)])
+    .then(function([departureTimes, arrivalTimes]) {
+      
+      console.log('Found routes!', departureTimes, arrivalTimes);
+      return findMatchingTrips(departureTimes, arrivalTimes);
+
     });
-
-    var arrivalTimes = result.filter(function(time) {
-      return time.stop_id == arrivalId;
-    });
-
-    return findMatchingTrips(departureTimes, arrivalTimes);
-
-  });
 
 }
 
