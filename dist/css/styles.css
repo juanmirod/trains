@@ -12,7 +12,7 @@ body {
   font-size: 16px;
   padding: 0px;
   margin: 0px;
-  color: #cd22cc;
+  color: #002288;
 }
 h1,
 h2,
@@ -20,25 +20,47 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Baloo Paaji', cursive;
+  font-family: 'Baloo Paaji', Arial, sans;
   font-size: 40px;
+  font-weight: 600;
 }
-label,
+label {
+  display: block;
+  margin: 10px;
+  font-size: 20px;
+}
 input,
 select {
   display: block;
   margin: 10px;
   font-size: 20px;
+  padding: 10px;
+  background-color: #e6e6e6;
+  border: 0;
+  box-shadow: 0px 5px 8px #a0a0c0;
+}
+input:active,
+select:active,
+input:focus,
+select:focus {
+  box-shadow: 0px 0px 0px;
+  background-color: #002266;
+  color: #d0d0ef;
+  border: 0px;
+  outline: 0px;
+}
+select {
+  margin: 0px auto;
 }
 .container {
   width: 100%;
   padding: 0px;
   margin: 0px;
-  background-color: #fdfda8;
+  background-color: #ffffff;
 }
 .container .header {
-  background-color: #fcfc76;
-  color: #cd22cc;
+  background-color: #e6e6e6;
+  color: #0044bb;
   padding: 10px;
 }
 .container .header h1 {
@@ -47,6 +69,10 @@ select {
 }
 .container .content {
   padding: 20px 0px 0px 0px;
+}
+.container .route-result {
+  margin-top: 20px;
+  background-color: #e6e6e6;
 }
 .alert {
   border: 1px solid grey;
@@ -71,9 +97,25 @@ select {
 .row:after {
   clear: both;
 }
+.row.table {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+  vertical-align: middle;
+}
+.row.table::odd {
+  background-color: #ffffff;
+}
+.row.table .cell {
+  font-size: 20px;
+}
 .col-50 {
   width: 100%;
   float: none;
+}
+.col-33 {
+  width: 33.3%;
+  float: left;
 }
 .col-100 {
   width: 100%;

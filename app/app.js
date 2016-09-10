@@ -43,8 +43,12 @@ function showTripTimes(trips, routes) {
     if(uniqueRoutes.indexOf(route.route_id) == -1) {
       // new route!!
       uniqueRoutes.push(route.route_id);
-      var row = `<div> ${route.route_id} - ${route.service_id} - 
-                <select>${options[route.route_id]}</select>
+      var row = `<div class="row table"> 
+                  <div class="col-33 cell">${route.route_id}</div>
+                  <div class="col-33 cell">${route.service_id}</div> 
+                  <div class="col-33 cell">
+                    <select>${options[route.route_id]}</select>
+                  </div>
                </div>`;
   
       results.innerHTML += row;
