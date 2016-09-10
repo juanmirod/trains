@@ -22,9 +22,11 @@ function addStops(stops) {
 
 function showTripTimes(trips, routes) {
 
+  var container = document.getElementById('route-result');
   var results = document.getElementById('timetable');
   results.innerHTML = '';
-  
+  container.style.opacity = 1;
+
   var uniqueRoutes = [];
   var options = [];
 
@@ -44,16 +46,19 @@ function showTripTimes(trips, routes) {
       // new route!!
       uniqueRoutes.push(route.route_id);
       var row = `<div class="row table"> 
-                  <div class="col-33 cell">${route.route_id}</div>
-                  <div class="col-33 cell">${route.service_id}</div> 
+                  <div class="col-33 cell">
+                    ${route.route_id}
+                  </div>
+                  <div class="col-33 cell">
+                    ${route.service_id}
+                  </div> 
                   <div class="col-33 cell">
                     <select>${options[route.route_id]}</select>
                   </div>
-               </div>`;
+                </div>`;
   
       results.innerHTML += row;
     }
-    
 
   });
 

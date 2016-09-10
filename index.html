@@ -45,25 +45,28 @@
         </div>
         <div class="row">
           <div class="col-100">
-            <p id="message-box" class="alert"></p>
+            <input type="submit" id="search" name="search" value="Search Route">
           </div>
         </div>
         <div class="row">
           <div class="col-100">
-            <input type="submit" id="search" name="search" value="Search Route">
+            <p id="message-box" class="alert"></p>
           </div>
         </div>
       </form>      
     </div>
 
-    <div class="row route-result">
+    <div id="route-result" class="row">
       <div class="col-100">
-        <h2>This is your suggested route</h2>
-        <div id="route">
-          
+        <h2>These are our suggested routes</h2>
+        <div id="headers">
+          <div class="row table"> 
+            <div class="col-33 cell">Route</div>
+            <div class="col-33 cell">Service</div>
+            <div class="col-33 cell">Times</div>
+         </div>
         </div>
         <div id="timetable">
-          
         </div>
       </div>
     </div>
