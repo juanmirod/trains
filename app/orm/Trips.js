@@ -26,37 +26,68 @@ import idb from './db.js';
         return Promise.resolve();
       }
 
-      // if there is nothing in the trips table, fill it!
-      return Http.stopTimes().then(function getStopTimesFromNetwork(results) {
-
-        if(results) { 
-
-            return idb().then(function storeTripsInIDB(db){
-
-              var transaction = db.transaction('trips', 'readwrite');
-              var tripsStore = transaction.objectStore('trips');
-
-              results.forEach( function(trip) {
-                tripsStore.put(trip);
-              });
-
-              return transaction.complete;
-
-            }).catch(function(error) {
-
-              console.error(error);
-
-            });
-
-        }
-
-      });
+      // if there is nothing in the trips and times table, fill them!
+      return Http.stopTimes()
+        .then(storeStopTimes)
+        .then(Http.trips)
+        .then(storeTrips);
 
     });
 
 
   }
 
+
+  function storeStopTimes(results) {
+
+    if(results) { 
+
+        return idb().then(function storeTripsInIDB(db){
+
+          var transaction = db.transaction('stop_times', 'readwrite');
+          var tripsStore = transaction.objectStore('stop_times');
+
+          results.forEach( function(trip) {
+            tripsStore.put(trip);
+          });
+
+          return transaction.complete;
+
+        }).catch(function(error) {
+
+          // the transaction didn't complete, so the table should be empty
+          console.error(error);
+
+        });
+
+    }
+
+  }
+
+  function storeTrips(results) {
+
+    if(results) { 
+
+        return idb().then(function storeTripsInIDB(db){
+
+          var transaction = db.transaction('trips', 'readwrite');
+          var tripsStore = transaction.objectStore('trips');
+
+          results.forEach( function(trip) {
+            tripsStore.put(trip);
+          });
+
+          return transaction.complete;
+
+        }).catch(function(error) {
+
+          console.error(error);
+
+        });
+
+    }
+
+  }
 
   // If indexedDB is populated, get the data and try to update from network
   // else try to get the data from network and save it
@@ -68,18 +99,34 @@ import idb from './db.js';
   export function getRoutesForStop(stop_id) {
 
     return this.getTripsStopTimes(stop_id)
-      .then(function getRoutesForTrips(trips) {
+      .then();
 
-        var routes = [];
-        trips.forEach(function getUniqueRoutes(trip) {
-          if(routes.indexOf(trip.route_id) == -1) {
-            routes.push(trip.route_id);
-          }
-        });
+  };
 
-        return routes;
+  export function getRoutesForTrips(trips) {
+
+    var trip_ids = [];
+    trips.forEach(function getUniqueTripIds(trip) {
+      if(trip_ids.indexOf(trip.trip_id) == -1) {
+        trip_ids.push(trip.trip_id);
+      }
+    });
+
+    // get the routes for this trips
+    return idb().then(function getAllRoutes(db) {
+      var transaction = db.transaction('trips');
+      var tripStore = transaction.objectStore('trips');
+
+      var routes = [];
+      trips.forEach(function appendTripPromise(trip) {
+
+        routes.push(tripStore.get(trip.trip_id));
 
       });
+
+      return Promise.all(routes);
+      
+    });
 
   };
 
@@ -92,8 +139,8 @@ import idb from './db.js';
       .then(() => idb())
       .then(function getTripsForStop(db){
 
-        var transaction = db.transaction('trips');
-        var tripsStore = transaction.objectStore('trips');
+        var transaction = db.transaction('stop_times');
+        var tripsStore = transaction.objectStore('stop_times');
         var stopIndex = tripsStore.index('stop');
 
         return stopIndex.getAll(stop_id);

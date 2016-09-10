@@ -20,15 +20,36 @@ function addStops(stops) {
 
 }
 
-function showTripTimes(trips) {
+function showTripTimes(trips, routes) {
 
   var results = document.getElementById('timetable');
   results.innerHTML = '';
   
-  trips.forEach( (trip, index) => {
+  var uniqueRoutes = [];
+  var options = [];
+
+  // Get the times for each route
+  routes.forEach( (route) => {
+    var routeOptions = trips
+      .filter((trip) => trip.trip_id == route.trip_id )
+      .map((trip) => `<option value="${trip.trip_id}">${trip.arrival_time}</option>`);
+
+    options[route.route_id] += routeOptions.join();
+  });
+
+  // create html for each route, addind the times in a select element
+  routes.forEach( (route, index) => {
     
-    var row = `<div> ${trip.arrival_time} - ${trip.trip_id} </div>`;
-    results.innerHTML += row;
+    if(uniqueRoutes.indexOf(route.route_id) == -1) {
+      // new route!!
+      uniqueRoutes.push(route.route_id);
+      var row = `<div> ${route.route_id} - ${route.service_id} - 
+                <select>${options[route.route_id]}</select>
+               </div>`;
+  
+      results.innerHTML += row;
+    }
+    
 
   });
 
@@ -125,13 +146,15 @@ function findMatchingTrips(departureTimes, arrivalTimes) {
 */
 function findTrips(departureId, arrivalId) {
 
-  return Promise.all([Trips.getTripStopTimes(departureId), Trips.getTripStopTimes(arrivalId)])
-    .then(function([departureTimes, arrivalTimes]) {
+  return Promise.all([Trips.getTripStopTimes(departureId), Trips.getTripStopTimes(arrivalId)]).then(
+      function([departureTimes, arrivalTimes]) {
       
-      console.log('Found routes!', departureTimes, arrivalTimes);
-      return findMatchingTrips(departureTimes, arrivalTimes);
+        console.log('Found routes!', departureTimes, arrivalTimes);
+        var trips = findMatchingTrips(departureTimes, arrivalTimes);
 
-    });
+        return {trips: trips, routes: Trips.getRoutesForTrips(trips)};
+
+      });
 
 }
 
@@ -160,14 +183,19 @@ function submitStations(evt) {
     
     // If the departure and arrival stations are correct
     // search for a trip between them and show the times and route
-    findTrips(getStationCode(departure), getStationCode(arrival)).then(function(trips){
-      if(trips.length > 0) {
-        showTripTimes(trips);
-      } else {
-        showInfoMessage('We couldn\'t find a trip between these two stations', 'error');
-      }
+    findTrips(getStationCode(departure), getStationCode(arrival)).then(function(data) {
+
+      data.routes.then(function(routes){
+          if(routes.length > 0) {
+            showTripTimes(data.trips, routes);
+          } else {
+            showInfoMessage('We couldn\'t find a trip between these two stations', 'error');
+          }
+
+        });
 
     });
+
   })
 
 

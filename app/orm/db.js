@@ -14,13 +14,15 @@ function openDatabase() {
           keyPath: 'stop_id'
         });
 
-        upgradeDb.createObjectStore('trips', {autoIncrement: true});
+        upgradeDb.createObjectStore('trips', {keyPath: 'trip_id'});
+
+        upgradeDb.createObjectStore('stop_times', {autoIncrement: true});
 
         upgradeDb.createObjectStore('routes', {
           keyPath: 'route_id'
         });
 
-        var tripStore = upgradeDb.transaction.objectStore('trips');
+        var tripStore = upgradeDb.transaction.objectStore('stop_times');
         tripStore.createIndex('stop', 'stop_id');
         tripStore.createIndex('trip', 'trip_id');
 
