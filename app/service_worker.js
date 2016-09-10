@@ -8,15 +8,19 @@ self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(staticCacheName).then(function(cache) {
       return cache.addAll([
-        './index.html',
-        './dist/js/main.js',
-        './dist/css/styles.css',
+        '/index.html',
+        '/dist/js/main.js',
+        '/dist/css/styles.css',
         'https://fonts.googleapis.com/css?family=Baloo+Paaji|Ubuntu',
-        './dist/data/stops.txt',
-        './dist/data/stop_times.txt',
-        './dist/data/routes.txt',
-        './dist/data/trips.txt'
+        '/dist/data/stops.txt',
+        '/dist/data/stop_times.txt',
+        '/dist/data/routes.txt',
+        '/dist/data/trips.txt'
       ]);
+    }).catch(function(error) {
+
+      console.log(error);
+
     })
   );
 });
@@ -41,20 +45,23 @@ self.addEventListener('activate', function(event) {
       );
     })
   );
+
 });
 
 /*
   Intercept fetch and respond with the cached element if there is a match
 */
 self.addEventListener('fetch', function(event) {
-  
   //var requestUrl = new URL(event.request.url);
-  console.log('Fetching...' + event.request.url);
 
-  event.respondWith(
+  event.respondWith(new Response('Service Worker working!'));
+  return;
+
+  /*event.respondWith(
     caches.match(event.request).then(function(response) {
       return response || fetch(event.request);
     })
   );
+  return;*/
 
 });

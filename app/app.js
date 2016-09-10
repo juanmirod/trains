@@ -93,6 +93,15 @@ function clearInfoMessage() {
   messageBox.className = 'alert';
 }
 
+function clearResults() {
+
+  var container = document.getElementById('route-result');
+  var results = document.getElementById('timetable');
+  results.innerHTML = '';
+  container.style.opacity = 0;
+
+}
+
 
 /*
   Request the stops from server and add them to an array
@@ -175,6 +184,7 @@ function submitStations(evt) {
 
   evt.preventDefault();
   clearInfoMessage();
+  clearResults();
   
   // get the inputs values
   var departure = document.getElementById('departure').value;
@@ -205,7 +215,9 @@ function submitStations(evt) {
 
     });
 
-  })
+    return false;
+
+  });
 
 
 }
