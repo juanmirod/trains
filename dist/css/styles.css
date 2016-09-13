@@ -12,7 +12,7 @@ body {
   font-size: 16px;
   padding: 0px;
   margin: 0px;
-  color: #002288;
+  color: #1a237e;
 }
 h1,
 h2,
@@ -35,8 +35,9 @@ select {
   margin: 10px;
   font-size: 20px;
   padding: 10px;
-  background-color: #e6e6e6;
+  background-color: #e5e5e5;
   border: 0;
+  color: #1a237e;
   box-shadow: 0px 5px 8px #a0a0c0;
 }
 input:active,
@@ -44,7 +45,7 @@ select:active,
 input:focus,
 select:focus {
   box-shadow: 0px 0px 0px;
-  background-color: #002266;
+  background-color: #1a237e;
   color: #f0f0ff;
   border: 0px;
   outline: 0px;
@@ -57,11 +58,11 @@ input[type="button"] {
   width: 100%;
   padding: 0px;
   margin: 0px;
-  background-color: #ffffff;
+  background-color: #fefefe;
 }
 .container .header {
-  background-color: #e6e6e6;
-  color: #0044bb;
+  background-color: #e5e5e5;
+  color: #1a237e;
   padding: 10px;
 }
 .container .header h1 {
@@ -74,7 +75,7 @@ input[type="button"] {
 .container #route-result {
   opacity: 0;
   margin-top: 20px;
-  background-color: #e6e6e6;
+  background-color: #e5e5e5;
   transition: opacity 0.25s ease-in;
 }
 .container #route-result input {
@@ -110,7 +111,7 @@ input[type="button"] {
   vertical-align: middle;
 }
 .row.table::odd {
-  background-color: #ffffff;
+  background-color: #fefefe;
 }
 .row.table .cell {
   font-size: 20px;

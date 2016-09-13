@@ -48,7 +48,7 @@ gulp.task('bundle', function() {
 
   // copy the service worker without bundling
   gulp.src('./app/service_worker.js')
-    .pipe(gulp.dest('./dist/js/'));
+    .pipe(gulp.dest('./'));
 });
 
 //////////////////////////// TESTS ////////////////////////////////////////
