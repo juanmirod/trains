@@ -8,7 +8,7 @@ import * as App from './app.js';
     if (!navigator.serviceWorker) return;
 
     navigator.serviceWorker.register('./service_worker.js', {scope: '/'}).then(function(reg) {
-      console.log('Registration worked!', reg);
+      //console.log('Registration worked!', reg);
 
       if (!navigator.serviceWorker.controller) {
         return;
@@ -16,7 +16,7 @@ import * as App from './app.js';
 
     }).catch(function(error) {
 
-      console.log('Registration failed!', error);
+      console.error('Registration failed!', error);
     
     });
 

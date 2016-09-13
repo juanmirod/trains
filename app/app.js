@@ -167,9 +167,7 @@ function findTrips(departureId, arrivalId) {
   return Promise.all([Trips.getTripStopTimes(departureId), Trips.getTripStopTimes(arrivalId)]).then(
       function([departureTimes, arrivalTimes]) {
       
-        console.log('Found routes!', departureTimes, arrivalTimes);
         var trips = findMatchingTrips(departureTimes, arrivalTimes);
-
         return {trips: trips, routes: Trips.getRoutesForTrips(trips)};
 
       });

@@ -22,7 +22,6 @@ import idb from './db.js';
 
       // if there is something in the db, don't bother in getting the data again from network
       if(result > 0) {
-        console.log(result);
         return Promise.resolve();
       }
 

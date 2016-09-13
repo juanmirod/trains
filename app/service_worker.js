@@ -52,13 +52,10 @@ self.addEventListener('activate', function(event) {
   Intercept fetch and respond with the cached element if there is a match
 */
 self.addEventListener('fetch', function(event) {
-  //var requestUrl = new URL(event.request.url);
-  //event.respondWith(new Response('Service Worker working!'));
-  //return;
-
+  
   event.respondWith(
     caches.match(event.request).then(function(response) {
-      if (response ) console.log('Found in cache!', event.request.url);
+      //if (response ) console.log('Found in cache!', event.request.url);
       return response || fetch(event.request);
     })
   );

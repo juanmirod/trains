@@ -1,4 +1,6 @@
 var gulp = require('gulp');
+var uglify = require('gulp-uglify');
+var cleanCSS = require('gulp-clean-css');
 var less = require('gulp-less');
 var LessAutoprefix = require('less-plugin-autoprefix');
 var autoprefix = new LessAutoprefix({ browsers: ['last 2 versions'] });
@@ -21,6 +23,7 @@ gulp.task('styles', function(){
     .pipe(less({
        plugins: [autoprefix]
      }))
+    .pipe(cleanCSS({ processImport: false }))
     .pipe(gulp.dest('./dist/css/'));
 
 });
@@ -44,10 +47,15 @@ gulp.task('bundle', function() {
       .on('error', function(err) { console.error(err); this.emit('end'); })
       .pipe(source('main.js'))
       .pipe(buffer())
+      .pipe(uglify())
       .pipe(gulp.dest('./dist/js'));
 
   // copy the service worker without bundling
-  gulp.src('./app/service_worker.js')
+  bundler('./app/main.js').bundle()
+    .on('error', function(err) { console.error(err); this.emit('end'); })
+    .pipe(source('service_worker.js'))
+    .pipe(buffer())
+    .pipe(uglify())
     .pipe(gulp.dest('./'));
 });
 
@@ -93,7 +101,7 @@ gulp.task('server', function() {
       baseDir: './'
     }
   });
-
+  
 });
 
 /*
