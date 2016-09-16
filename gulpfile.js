@@ -29,20 +29,19 @@ gulp.task('styles', function(){
 });
 
 /////////////////////////////// JS //////////////////////////////////
+var bundler = function(file){
+  return browserify(file, { debug: true })
+                .transform(babel.configure({
+                  presets: ["es2015"]
+                }));
+}
 
-/*
-  Transpiles the code using babel and es2015 preset and then bundles 
-  the application in a file.
-*/
-gulp.task('bundle', function() {
+gulp.task('bundlejs:prod', function() {
 
-  var bundler = function(file){
-    return browserify(file, { debug: true })
-                  .transform(babel.configure({
-                    presets: ["es2015"]
-                  }));
-  }
-
+  /*
+    Transpiles the code using babel and es2015 preset and then bundles 
+    the application in a file.
+  */
   bundler('./app/main.js').bundle()
       .on('error', function(err) { console.error(err); this.emit('end'); })
       .pipe(source('main.js'))
@@ -50,13 +49,31 @@ gulp.task('bundle', function() {
       .pipe(uglify())
       .pipe(gulp.dest('./dist/js'));
 
-  // copy the service worker without bundling
-  bundler('./app/main.js').bundle()
+  // transpile and copy the service worker
+  bundler('./app/service_worker.js').bundle()
     .on('error', function(err) { console.error(err); this.emit('end'); })
     .pipe(source('service_worker.js'))
     .pipe(buffer())
-    .pipe(uglify())
     .pipe(gulp.dest('./'));
+
+});
+
+gulp.task('bundlejs:dev', function() {
+
+  bundler('./app/main.js').bundle()
+      .on('error', function(err) { console.error(err); this.emit('end'); })
+      .pipe(source('main.js'))
+      .pipe(buffer())
+      .pipe(gulp.dest('./dist/js'));
+
+  // transpile and copy the service worker
+  bundler('./app/service_worker.js').bundle()
+    .on('error', function(err) { console.error(err); this.emit('end'); })
+    .pipe(source('service_worker.js'))
+    .pipe(buffer())
+    .pipe(gulp.dest('./'));
+
+
 });
 
 //////////////////////////// TESTS ////////////////////////////////////////
@@ -117,10 +134,10 @@ gulp.task('reload', function() {
   */
 
 // Development
-gulp.task('serve', ['server', 'styles', 'bundle'], function() {
+gulp.task('serve', ['server', 'styles', 'bundlejs:dev'], function() {
 
   gulp.watch('less/**/*.less', ['styles']);
-  gulp.watch('app/**/*.js', ['bundle']);
+  gulp.watch('app/**/*.js', ['bundlejs:dev']);
 
   gulp.watch([
     'dist/css/*.css',
@@ -129,3 +146,7 @@ gulp.task('serve', ['server', 'styles', 'bundle'], function() {
     ], ['reload']);
 
 });
+
+// Production
+// don't need to watch here, we are not supossed to change code on production
+gulp.task('serve:dist', ['server', 'styles', 'bundlejs:prod']);
