@@ -7,6 +7,8 @@ import idb from './db.js';
     This way we don't need any initialization function, just call this function in each retrieving
     method and it will get sure that everything is set up before trying to get the content.
   */
+  var waitingForNetwork = false;
+
   function setTrips() {
 
     return idb().then(db => {
@@ -21,9 +23,11 @@ import idb from './db.js';
     }).then(result => {
 
       // if there is something in the db, don't bother in getting the data again from network
-      if(result > 0) {
+      if(result > 0 || waitingForNetwork) {
         return Promise.resolve();
       }
+
+      waitingForNetwork = true;
 
       // if there is nothing in the trips and times table, fill them!
       return Http.stopTimes()
@@ -102,14 +106,32 @@ import idb from './db.js';
 
   };
 
-  export function getRoutesForTrips(trips) {
+  export function appendTripInfo(stop_times) {
 
-    var trip_ids = [];
-    trips.forEach(function getUniqueTripIds(trip) {
-      if(trip_ids.indexOf(trip.trip_id) == -1) {
-        trip_ids.push(trip.trip_id);
-      }
+    return idb().then(function getAllRoutes(db) {
+      var transaction = db.transaction('trips');
+      var tripStore = transaction.objectStore('trips');
+
+      var trips = [];
+      stop_times.forEach(function appendTripPromise(trip) {
+
+        trips.push(tripStore.get(trip.trip_id));
+
+      });
+
+      return Promise.all(trips);
+      
+    }).then(function(trips) { 
+
+      return stop_times.map(function(stop, index) {
+        stop.trip = trips[index];
+        return stop;
+      });
+
     });
+  }
+
+  export function getRoutesForTrips(trips) {
 
     // get the routes for this trips
     return idb().then(function getAllRoutes(db) {
@@ -125,6 +147,19 @@ import idb from './db.js';
 
       return Promise.all(routes);
       
+    }).then(function(routes) {
+
+      var service_ids = [];
+      var uniqueRoutes = [];
+      routes.forEach(function getUniqueServiceIds(trip) {
+        if(service_ids.indexOf(trip.service_id) == -1) {
+          service_ids.push(trip.service_id);
+          uniqueRoutes.push(trip);
+        }
+      });
+
+      return uniqueRoutes;
+
     });
 
   };

@@ -20,7 +20,7 @@ function addStops(stops) {
 
 }
 
-function showTripTimes(departure_id, arrival_id, trips, routes) {
+function showTripTimes(departure_id, arrival_id, stop_times, routes) {
 
   var container = document.getElementById('route-result');
   var results = document.getElementById('timetable');
@@ -31,12 +31,15 @@ function showTripTimes(departure_id, arrival_id, trips, routes) {
   var options = [];
   var tripsPromises = [];
 
+
   // Get the times for each trip
   routes.forEach( (route) => {
-    var routeTrips = trips
-      .filter((trip) => trip.trip_id == route.trip_id ); 
 
-    var routeOptions = '';
+    options[route.service_id] = '';
+    
+    var routeTrips = stop_times
+      .filter((stop) => stop.trip.service_id == route.service_id );
+
     routeTrips.forEach(function (trip) {
 
       var departurePromise = Trips.getStopInTripTime(departure_id, trip.trip_id);
@@ -44,22 +47,21 @@ function showTripTimes(departure_id, arrival_id, trips, routes) {
       
       tripsPromises.push(Promise.all([departurePromise, arrivalPromise]).then(function([departureTime, arrivalTime]) {
         
-        var duration = 0;
+        var durationInSeconds = timeToSeconds(arrivalTime[0].arrival_time) - timeToSeconds(departureTime[0].arrival_time);
+        var duration = secondsToTime(durationInSeconds);
 
-        routeOptions += `<div>
-                          <div class="col-33 cell">
-                            ${departureTime[0].arrival_time}
-                          </div>
-                          <div class="col-33 cell">
-                            ${duration}
-                          </div>
-                          <div class="col-33 cell">
-                            ${arrivalTime[0].arrival_time}
-                          </div>
-                        </div>`;
-
-        options[route.route_id] += routeOptions;
-
+        options[route.service_id] += `<div class="row">
+                                      <div class="col-33 cell">
+                                        ${departureTime[0].stop_id} - ${departureTime[0].arrival_time}
+                                      </div>
+                                      <div class="col-33 cell">
+                                        ${arrivalTime[0].stop_id} - ${arrivalTime[0].arrival_time}
+                                      </div>
+                                      <div class="col-33 cell">
+                                        ${duration}
+                                      </div>
+                                    </div>`;
+        
       }));
 
     });
@@ -71,17 +73,23 @@ function showTripTimes(departure_id, arrival_id, trips, routes) {
 
     routes.forEach( (route, index) => {
     
-      if(uniqueRoutes.indexOf(route.route_id) == -1) {
+      if(uniqueRoutes.indexOf(route.service_id) == -1) {
         // new route!!
-        uniqueRoutes.push(route.route_id);
-        var row = `<div class="">
+        uniqueRoutes.push(route.service_id);
+        var row =`<div class="">
                     Route: ${route.route_id}
                   </div>
                   <div class="">
                     Service: ${route.service_id}
                   </div>
-                  <div class="row table"> 
-                    ${options[route.route_id]}
+                  <div class="table"> 
+                      <div class="row"> 
+                        <div class="col-33 cell">Depart. - Time</div>
+                        <div class="col-33 cell">Arriv. - Time</div>
+                        <div class="col-33 cell">Duration</div>
+                      </div>
+                      ${options[route.service_id]}
+                      <hr>
                   </div>`;
     
         results.innerHTML += row;
@@ -183,11 +191,31 @@ function checkStation(station) {
 */
 function timeToSeconds(time) {
 
-  var timeParts = time.split(':');
+  var timeParts = time.split(':').map(num => parseInt(num));
   return timeParts[0]*3600 + timeParts[1]*60 + timeParts[2];
 
 }
 
+function secondsToTime(seconds) {
+
+  var hours = Math.floor(seconds/3600);
+  var minutes = Math.floor((seconds - hours*3600)/60);
+  return `${twoDigits(hours)}:${twoDigits(minutes)}:${twoDigits(seconds%60)}`;
+
+}
+
+function twoDigits(number) {
+  
+  return number > 9 ? `${number}` : `0${number}`; 
+
+}
+
+/*
+  Auxiliary function to find trips that meet the requirements 
+   - A valid trip must go to both the departure stop and the arrival stop
+   - A valid trip must go first to the departure stop, ie the departure stop time must 
+   be before the arrival stop time.
+*/
 function findMatchingTrips(departureTimes, arrivalTimes) {
 
   // gets all trips that goes to the departure stop and the arrival stop
@@ -209,8 +237,8 @@ function findTrips(departureId, arrivalId) {
   return Promise.all([Trips.getTripStopTimes(departureId), Trips.getTripStopTimes(arrivalId)]).then(
       function([departureTimes, arrivalTimes]) {
       
-        var trips = findMatchingTrips(departureTimes, arrivalTimes);
-        return {trips: trips, routes: Trips.getRoutesForTrips(trips)};
+        var stop_times = findMatchingTrips(departureTimes, arrivalTimes);
+        return {trips: Trips.appendTripInfo(stop_times), routes: Trips.getRoutesForTrips(stop_times)};
 
       });
 
@@ -244,14 +272,15 @@ function submitStations(evt) {
     // search for a trip between them and show the times and route
     findTrips(departure_id, arrival_id).then(function(data) {
 
-      data.routes.then(function(routes){
-          if(routes.length > 0) {
-            showTripTimes(departure_id, arrival_id, data.trips, routes);
-          } else {
-            showInfoMessage('We couldn\'t find a trip between these two stations', 'error');
-          }
+      Promise.all([data.trips, data.routes]).then(function([trips, routes]){
+        
+        if(routes.length > 0) {
+          showTripTimes(departure_id, arrival_id, trips, routes);
+        } else {
+          showInfoMessage('We couldn\'t find a trip between these two stations', 'error');
+        }
 
-        });
+      });
 
     });
 

@@ -122,20 +122,33 @@ select, input[type="button"] {
     clear: both;
   }
 
-  &.table {
+}
+
+.table {
+  overflow-x: scroll;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+  vertical-align: middle;
+
+  .row {
+    min-width: 420px;
     padding-top: 5px;
     padding-bottom: 5px;
-    text-align: center;
-    vertical-align: middle;
 
-    &::odd {
+    &:nth-child(odd) {
       background-color: @background-lighter;
     }
-
-    .cell {
-      font-size: 20px;
-    }
   }
+
+  hr {
+    border-top: 1px solid @text-normal;
+    border-bottom: 0px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    height: 0;
+  }
+
 }
 
 .col-50 {
