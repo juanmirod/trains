@@ -148,15 +148,13 @@ import idb from './db.js';
   };
 
   /*
-    Get all the trips for a route
+    Get the time for a stop and a trip
   */
-  export function getTripsForRoute(route_id) {
+  export function getStopInTripTime(stop_id, trip_id) {
 
-  };
+    return this.getTripStopTimes(stop_id)
+      .then(function getTimeForATrip(trips){
+        return trips.filter((trip) => trip.trip_id == trip_id);
+      });
 
-  /*
-    Get all the stops for a route
-  */
-  export function getStopsForRoute(route_id) {
-
-  };
+  }

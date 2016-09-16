@@ -8,6 +8,7 @@ self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(staticCacheName).then(function(cache) {
       return cache.addAll([
+        '/',
         '/index.html',
         '/dist/js/main.js',
         '/dist/css/styles.css',
