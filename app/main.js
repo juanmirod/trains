@@ -37,6 +37,7 @@ import * as App from './app.js';
 
   };
 
+
   ready().then(function() {
     App.init();
     registerServiceWorker();

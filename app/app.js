@@ -36,7 +36,7 @@ function showTripTimes(departure_id, arrival_id, stop_times, routes) {
   routes.forEach( (route) => {
 
     options[route.service_id] = '';
-    
+
     var routeTrips = stop_times
       .filter((stop) => stop.trip.service_id == route.service_id );
 

@@ -3,6 +3,7 @@ const routesFile    = 'routes.txt';
 const tripsFile     = 'trips.txt';
 const stopsFile     = 'stops.txt';
 const stopTimesFile = 'stop_times.txt';
+const shapesFile    = 'shapes.txt';
 
 const csvToArray = function(text) {
   
@@ -71,4 +72,8 @@ export function stops() {
 
 export function stopTimes() {
   return getCsvAsObjects(baseUrl + stopTimesFile); 
+};
+
+export function shapes() {
+  return getCsvAsObjects(baseUrl + shapesFile); 
 };

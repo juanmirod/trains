@@ -13,6 +13,7 @@ self.addEventListener('install', function(event) {
         '/dist/js/main.js',
         '/dist/css/styles.css',
         'https://fonts.googleapis.com/css?family=Baloo+Paaji|Ubuntu',
+        '/dist/img/CaltrainZoneMap.png',
         '/dist/data/stops.txt',
         '/dist/data/stop_times.txt',
         '/dist/data/routes.txt',
