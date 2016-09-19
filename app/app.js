@@ -20,6 +20,55 @@ function addStops(stops) {
 
 }
 
+/*
+  Template to create the rows in the route results table
+*/
+function createOptionHTML([departureTime, arrivalTime]) {
+        
+  var durationInSeconds = timeToSeconds(arrivalTime[0].arrival_time) - timeToSeconds(departureTime[0].arrival_time);
+  var duration = secondsToTime(durationInSeconds);
+
+  return `<div class="row">
+            <div class="col-33 cell">
+              ${departureTime[0].stop_id} - ${departureTime[0].arrival_time}
+            </div>
+            <div class="col-33 cell">
+              ${arrivalTime[0].stop_id} - ${arrivalTime[0].arrival_time}
+            </div>
+            <div class="col-33 cell">
+              ${duration}
+            </div>
+          </div>`;
+  
+}
+
+/*
+  Template for each route/service in the results 
+*/
+function createServiceHTML(route, options) {
+
+  return `<div class="">
+            Route: ${route.route_id}
+          </div>
+          <div class="">
+            Service: ${route.service_id}
+          </div>
+          <div class="table"> 
+              <div class="row"> 
+                <div class="col-33 cell">Depart. - Time</div>
+                <div class="col-33 cell">Arriv. - Time</div>
+                <div class="col-33 cell">Duration</div>
+              </div>
+              ${options[route.service_id]}
+              <hr>
+          </div>`;
+
+}
+
+/*
+  Show the results from the routes found: route, service_id and available times with trip duration for the
+  selected stops.
+*/
 function showTripTimes(departure_id, arrival_id, stop_times, routes) {
 
   var container = document.getElementById('route-result');
@@ -31,74 +80,44 @@ function showTripTimes(departure_id, arrival_id, stop_times, routes) {
   var options = [];
   var tripsPromises = [];
 
-
   // Get the times for each trip
-  routes.forEach( (route) => {
+  routes.forEach( function(route) {
 
     options[route.service_id] = '';
 
+    // get only the trips of this service
     var routeTrips = stop_times
       .filter((stop) => stop.trip.service_id == route.service_id );
 
+    // create a row for each trip
     routeTrips.forEach(function (trip) {
 
       var departurePromise = Trips.getStopInTripTime(departure_id, trip.trip_id);
       var arrivalPromise = Trips.getStopInTripTime(arrival_id, trip.trip_id);
       
-      tripsPromises.push(Promise.all([departurePromise, arrivalPromise]).then(function([departureTime, arrivalTime]) {
-        
-        var durationInSeconds = timeToSeconds(arrivalTime[0].arrival_time) - timeToSeconds(departureTime[0].arrival_time);
-        var duration = secondsToTime(durationInSeconds);
-
-        options[route.service_id] += `<div class="row">
-                                      <div class="col-33 cell">
-                                        ${departureTime[0].stop_id} - ${departureTime[0].arrival_time}
-                                      </div>
-                                      <div class="col-33 cell">
-                                        ${arrivalTime[0].stop_id} - ${arrivalTime[0].arrival_time}
-                                      </div>
-                                      <div class="col-33 cell">
-                                        ${duration}
-                                      </div>
-                                    </div>`;
-        
+      tripsPromises.push(Promise.all([departurePromise, arrivalPromise]).then(createOptionHTML).then((html) => {
+        options[route.service_id] += html;
       }));
 
     });
 
   });
 
-  // create html for each route, adding the times calculated for each trip
+  // when all trips are finished create html for each route, adding the times calculated for each trip
   Promise.all(tripsPromises).then(function() {
 
     routes.forEach( (route, index) => {
     
       if(uniqueRoutes.indexOf(route.service_id) == -1) {
-        // new route!!
+        
         uniqueRoutes.push(route.service_id);
-        var row =`<div class="">
-                    Route: ${route.route_id}
-                  </div>
-                  <div class="">
-                    Service: ${route.service_id}
-                  </div>
-                  <div class="table"> 
-                      <div class="row"> 
-                        <div class="col-33 cell">Depart. - Time</div>
-                        <div class="col-33 cell">Arriv. - Time</div>
-                        <div class="col-33 cell">Duration</div>
-                      </div>
-                      ${options[route.service_id]}
-                      <hr>
-                  </div>`;
-    
-        results.innerHTML += row;
+        results.innerHTML += createServiceHTML(route, options);
+        
       }
 
     });
 
   });
-  
 
 }
 
