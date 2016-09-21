@@ -71,18 +71,18 @@ function createServiceHTML(route, options) {
 */
 function showTripTimes(departure_id, arrival_id, stop_times, routes) {
 
-  var container = document.getElementById('route-result');
-  var results = document.getElementById('timetable');
+  var container = document.getElementById('route-result'),
+  results = document.getElementById('timetable'),
+  uniqueRoutes = [],
+  options = [];
   results.innerHTML = '';
   container.style.opacity = 1;
 
-  var uniqueRoutes = [];
-  var options = [];
-  var tripsPromises = [];
 
   // Get the times for each trip
   routes.forEach( function(route) {
 
+    var tripsPromises = [];
     options[route.service_id] = '';
 
     // get only the trips of this service
@@ -101,20 +101,11 @@ function showTripTimes(departure_id, arrival_id, stop_times, routes) {
 
     });
 
-  });
+    // when all trips are finished create html for each route, adding the times calculated for each trip
+    Promise.all(tripsPromises).then(function() {
 
-  // when all trips are finished create html for each route, adding the times calculated for each trip
-  Promise.all(tripsPromises).then(function() {
-
-    routes.forEach( (route, index) => {
+      results.innerHTML += createServiceHTML(route, options);
     
-      if(uniqueRoutes.indexOf(route.service_id) == -1) {
-        
-        uniqueRoutes.push(route.service_id);
-        results.innerHTML += createServiceHTML(route, options);
-        
-      }
-
     });
 
   });
